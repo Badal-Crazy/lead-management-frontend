@@ -1,17 +1,25 @@
 // ============================================
 // MASTER CRM - FRONTEND CONFIGURATION
-// CHANGE ALL SETTINGS HERE - ONE PLACE ONLY
 // ============================================
 
+// Get the current hostname/IP
+const hostname = window.location.hostname;
+
+// If accessing from localhost or 127.0.0.1, use localhost
+// Otherwise use the current hostname/IP
+const API_HOST = (hostname === 'localhost' || hostname === '127.0.0.1') 
+    ? 'localhost' 
+    : hostname;
+
 // ---------- API Configuration ----------
-// Change these values to update everywhere
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+export const API_BASE_URL = `http://${API_HOST}:8080`;
 export const API_URL = `${API_BASE_URL}/api`;
 
 // ---------- Frontend Configuration ----------
-export const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5173';
+export const FRONTEND_URL = window.location.origin;
 export const APP_NAME = 'Master CRM';
 export const APP_VERSION = '2.0.0';
+export const CUSTOM_IP = API_HOST;
 
 // ---------- Authentication ----------
 export const AUTH = {
@@ -87,6 +95,28 @@ export const ENDPOINTS = {
     ADMIN: '/dashboard/admin',
     SUPER_ADMIN: '/dashboard/super-admin',
   },
+  // Reports
+  REPORTS: {
+    AGENT_PERFORMANCE: '/reports/agent-performance',
+    ADMIN_PERFORMANCE: '/reports/admin-performance',
+    TEAM_PERFORMANCE: '/reports/team-performance',
+    LEAD_STATUS: '/reports/lead-status',
+    DISPOSITION_SUMMARY: '/reports/disposition-summary',
+    ALLOCATION_SUMMARY: '/reports/allocation-summary',
+    LOGIN_LOGOUT: '/reports/login-logout',
+    DATE_WISE: '/reports/date-wise',
+    EXPORT: '/reports/export',
+  },
+  // Upload
+  UPLOAD: {
+    LEADS: '/uploads/leads',
+    PROGRESS: '/uploads/progress',
+    STATUS: '/uploads/status',
+    RESULT: '/uploads/result',
+    ERRORS: '/uploads/errors',
+    CANCEL: '/uploads/cancel',
+    HISTORY: '/uploads/history',
+  },
 };
 
 // ---------- Default Values ----------
@@ -113,6 +143,7 @@ export default {
   FRONTEND_URL,
   APP_NAME,
   APP_VERSION,
+  CUSTOM_IP,
   AUTH,
   ENDPOINTS,
   DEFAULTS,
