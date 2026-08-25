@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { API_URL, AUTH, ENDPOINTS, DEFAULTS } from '../config';
 
-// ============================================
-// API CLIENT - Uses centralized config
-// Change config in src/config/index.js only
-// ============================================
-
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -39,29 +34,25 @@ api.interceptors.response.use(
   }
 );
 
-// ============================================
-// ALL APIS USING CENTRALIZED ENDPOINTS
-// ============================================
-
 // 1. Authentication APIs
 export const authApi = {
-  login: (data) => api.post('/auth/login', data),
-  logout: () => api.post('/auth/logout'),
-  signup: (data) => api.post('/auth/signup', data),
-  refreshToken: () => api.post('/auth/refresh-token'),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (data) => api.post('/auth/reset-password', data),
+  login: (data) => api.post(ENDPOINTS.AUTH.LOGIN, data),
+  logout: () => api.post(ENDPOINTS.AUTH.LOGOUT),
+  signup: (data) => api.post(ENDPOINTS.AUTH.SIGNUP, data),
+  refreshToken: () => api.post(ENDPOINTS.AUTH.REFRESH_TOKEN),
+  forgotPassword: (email) => api.post(ENDPOINTS.AUTH.FORGOT_PASSWORD, { email }),
+  resetPassword: (data) => api.post(ENDPOINTS.AUTH.RESET_PASSWORD, data),
 };
 
 // 2. Profile APIs
 export const profileApi = {
-  getProfile: () => api.get('/profile/me'),
-  updateProfile: (data) => api.put('/profile/me', data),
-  changePassword: (data) => api.put('/profile/change-password', data),
+  getProfile: () => api.get(ENDPOINTS.PROFILE.GET),
+  updateProfile: (data) => api.put(ENDPOINTS.PROFILE.UPDATE, data),
+  changePassword: (data) => api.put(ENDPOINTS.PROFILE.CHANGE_PASSWORD, data),
   uploadAvatar: (file) => {
     const formData = new FormData();
     formData.append('avatar', file);
-    return api.post('/profile/avatar', formData, {
+    return api.post(ENDPOINTS.PROFILE.AVATAR, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
@@ -69,219 +60,52 @@ export const profileApi = {
 
 // 3. User Management APIs
 export const userApi = {
-  getUsers: () => api.get('/users'),
-  getUser: (userId) => api.get(`/users/${userId}`),
-  updateUser: (userId, data) => api.put(`/users/${userId}`, data),
-  approveUser: (userId) => api.post(`/users/${userId}/approve`),
-  rejectUser: (userId) => api.post(`/users/${userId}/reject`),
-  activateUser: (userId) => api.post(`/users/${userId}/activate`),
-  deactivateUser: (userId) => api.post(`/users/${userId}/deactivate`),
-  getAllUsers: () => api.get('/users/all'),
-  createUser: (data) => api.post('/users/create', data),
-  deleteUser: (userId) => api.delete(`/users/${userId}`),
-  updateUserRole: (userId, role) => api.put(`/users/${userId}/role`, { role }),
-  assignAdmin: (userId, adminId) => api.put(`/users/${userId}/admin`, { adminId }),
-  assignTeam: (userId, teamId) => api.put(`/users/${userId}/team`, { teamId }),
+  getUsers: () => api.get(ENDPOINTS.USERS.GET),
+  getUser: (userId) => api.get(`${ENDPOINTS.USERS.GET}/${userId}`),
+  updateUser: (userId, data) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}`, data),
+  approveUser: (userId) => api.post(`${ENDPOINTS.USERS.APPROVE}/${userId}`),
+  rejectUser: (userId) => api.post(`${ENDPOINTS.USERS.REJECT}/${userId}`),
+  activateUser: (userId) => api.post(`${ENDPOINTS.USERS.ACTIVATE}/${userId}`),
+  deactivateUser: (userId) => api.post(`${ENDPOINTS.USERS.DEACTIVATE}/${userId}`),
+  getAllUsers: () => api.get(ENDPOINTS.USERS.ALL),
+  createUser: (data) => api.post(ENDPOINTS.USERS.GET, data),
+  deleteUser: (userId) => api.delete(`${ENDPOINTS.USERS.DELETE}/${userId}`),
+  updateUserRole: (userId, role) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}/role`, { role }),
+  assignAdmin: (userId, adminId) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}/admin`, { adminId }),
+  assignTeam: (userId, teamId) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}/team`, { teamId }),
 };
 
 // 4. Role Management APIs
 export const roleApi = {
-  getRoles: () => api.get('/roles'),
-  createRole: (data) => api.post('/roles', data),
-  updateRole: (roleId, data) => api.put(`/roles/${roleId}`, data),
-  deleteRole: (roleId) => api.delete(`/roles/${roleId}`),
+  getRoles: () => api.get(ENDPOINTS.ROLES?.GET || '/roles'),
+  createRole: (data) => api.post(ENDPOINTS.ROLES?.CREATE || '/roles', data),
+  updateRole: (roleId, data) => api.put(`${ENDPOINTS.ROLES?.UPDATE || '/roles'}/${roleId}`, data),
+  deleteRole: (roleId) => api.delete(`${ENDPOINTS.ROLES?.DELETE || '/roles'}/${roleId}`),
 };
 
 // 5. Team Management APIs
 export const teamApi = {
-  getTeams: () => api.get('/teams'),
-  createTeam: (data) => api.post('/teams', data),
-  getTeam: (teamId) => api.get(`/teams/${teamId}`),
-  updateTeam: (teamId, data) => api.put(`/teams/${teamId}`, data),
-  deleteTeam: (teamId) => api.delete(`/teams/${teamId}`),
-  addUserToTeam: (teamId, userId) => api.post(`/teams/${teamId}/users`, { userId }),
-  removeUserFromTeam: (teamId, userId) => api.delete(`/teams/${teamId}/users/${userId}`),
-  getTeamUsers: (teamId) => api.get(`/teams/${teamId}/users`),
+  getTeams: () => api.get(ENDPOINTS.TEAMS?.GET || '/teams'),
+  createTeam: (data) => api.post(ENDPOINTS.TEAMS?.CREATE || '/teams', data),
+  getTeam: (teamId) => api.get(`${ENDPOINTS.TEAMS?.GET || '/teams'}/${teamId}`),
+  updateTeam: (teamId, data) => api.put(`${ENDPOINTS.TEAMS?.UPDATE || '/teams'}/${teamId}`, data),
+  deleteTeam: (teamId) => api.delete(`${ENDPOINTS.TEAMS?.DELETE || '/teams'}/${teamId}`),
+  addUserToTeam: (teamId, userId) => api.post(`${ENDPOINTS.TEAMS?.GET || '/teams'}/${teamId}/users`, { userId }),
+  removeUserFromTeam: (teamId, userId) => api.delete(`${ENDPOINTS.TEAMS?.GET || '/teams'}/${teamId}/users/${userId}`),
+  getTeamUsers: (teamId) => api.get(`${ENDPOINTS.TEAMS?.GET || '/teams'}/${teamId}/users`),
 };
 
-// 6. Admin-Agent Mapping APIs
-export const mappingApi = {
-  getMappings: () => api.get('/admin-agent-mapping'),
-  createMapping: (data) => api.post('/admin-agent-mapping', data),
-  updateMapping: (id, data) => api.put(`/admin-agent-mapping/${id}`, data),
-  deleteMapping: (id) => api.delete(`/admin-agent-mapping/${id}`),
-  getAdminAgents: (adminId) => api.get(`/admins/${adminId}/agents`),
-  getAgentAdmin: (agentId) => api.get(`/agents/${agentId}/admin`),
-};
-
-// 7. Lead Management APIs
-export const leadApi = {
-  getMyAllocation: () => api.get('/leads/my-allocation'),
-  getMyAllocationSummary: () => api.get('/leads/my-allocation/summary'),
-  getLead: (leadId) => api.get(`/leads/${leadId}`),
-  searchMyAllocation: (query) => api.get(`/leads/my-allocation/search?q=${query}`),
-  getTeamLeads: () => api.get('/leads/team'),
-  getUnallocatedLeads: () => api.get('/leads/unallocated'),
-  getLeads: () => api.get('/leads'),
-  uploadLeads: (file, onProgress) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return api.post('/leads/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: onProgress,
-    });
-  },
-  getUploadProgress: (uploadId) => api.get(`/leads/upload/${uploadId}/progress`),
-  getUploadStatus: (uploadId) => api.get(`/leads/upload/${uploadId}/status`),
-  bulkAssign: (data) => api.post('/leads/bulk-assign', data),
-  reassignLead: (data) => api.post('/leads/reassign', data),
-  deleteLead: (leadId) => api.delete(`/leads/${leadId}`),
-  deleteLeadsByUploadName: (uploadName) => api.delete(`/leads/upload/${uploadName}`),
-  bulkDeleteLeads: (leadIds) => api.delete('/leads/bulk', { data: { leadIds } }),
-  getUploadHistory: () => api.get('/leads/upload-history'),
-  searchLeads: (query, type) => api.get(`/leads/search?q=${query}&type=${type}`),
-  getAllLeads: () => api.get('/leads/all'),
-  createLead: (data) => api.post('/leads/create', data),
-  updateLead: (leadId, data) => api.put(`/leads/${leadId}`, data),
-  bulkUploadLeads: (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return api.post('/leads/bulk-upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  },
-  bulkReassignLeads: (data) => api.post('/leads/bulk-reassign', data),
-};
-
-// 8. Allocation APIs
-export const allocationApi = {
-  getMyAllocations: () => api.get('/allocations/my'),
-  getAllocations: () => api.get('/allocations'),
-  createAllocation: (data) => api.post('/allocations', data),
-  bulkCreateAllocations: (data) => api.post('/allocations/bulk', data),
-  updateAllocation: (allocationId, data) => api.put(`/allocations/${allocationId}`, data),
-  reassignAllocation: (data) => api.post('/allocations/reassign', data),
-  deleteAllocation: (allocationId) => api.delete(`/allocations/${allocationId}`),
-  getAgentAllocations: (agentId) => api.get(`/allocations/agent/${agentId}`),
-  getAdminAllocations: (adminId) => api.get(`/allocations/admin/${adminId}`),
-  getUnallocated: () => api.get('/allocations/unallocated'),
-};
-
-// 9. Disposition APIs
-export const dispositionApi = {
-  createDisposition: (data) => api.post('/dispositions', data),
-  getMyDispositions: () => api.get('/dispositions/my'),
-  getMyDispositionSummary: () => api.get('/dispositions/my/summary'),
-  getMyDateWiseDispositions: (date) => api.get(`/dispositions/my/date-wise?date=${date}`),
-  getTeamDispositions: () => api.get('/dispositions/team'),
-  getAgentDispositions: (agentId) => api.get(`/dispositions/agent/${agentId}`),
-  getDispositionSummary: () => api.get('/dispositions/summary'),
-  getDateWiseDispositions: (date) => api.get(`/dispositions/date-wise?date=${date}`),
-  getAllDispositions: () => api.get('/dispositions/all'),
-  getAllDispositionSummary: () => api.get('/dispositions/summary/all'),
-  getAdminDispositions: (adminId) => api.get(`/dispositions/admin/${adminId}`),
-  downloadDispositions: (startDate, endDate) => 
-    api.get(`/dispositions/download?startDate=${startDate}&endDate=${endDate}`, {
-      responseType: 'blob',
-    }),
-};
-
-// 10. Disposition Master APIs
-export const dispositionTypeApi = {
-  getTypes: () => api.get('/disposition-types'),
-  createType: (data) => api.post('/disposition-types', data),
-  updateType: (id, data) => api.put(`/disposition-types/${id}`, data),
-  deleteType: (id) => api.delete(`/disposition-types/${id}`),
-};
-
-// 11. Dashboard APIs
-export const dashboardApi = {
-  getAgentDashboard: () => api.get('/dashboard/agent'),
-  getAdminDashboard: () => api.get('/dashboard/admin'),
-  getSuperAdminDashboard: () => api.get('/dashboard/super-admin'),
-};
-
-// 12. Reports APIs - FIXED
-export const reportsApi = {
-  getAgentPerformance: (params) => api.get('/reports/agent-performance', { params }),
-  getAdminPerformance: (params) => api.get('/reports/admin-performance', { params }),
-  getTeamPerformance: (params) => api.get('/reports/team-performance', { params }),
-  getLeadStatus: (params) => api.get('/reports/lead-status', { params }),
-  getDispositionSummary: (params) => api.get('/reports/disposition-summary', { params }),
-  getAllocationSummary: (params) => api.get('/reports/allocation-summary', { params }),
-  getLoginLogout: (params) => api.get('/reports/login-logout', { params }),
-  getDateWiseReport: (params) => api.get('/reports/date-wise', { params }),
-  exportReport: (params) => api.get('/reports/export', { params, responseType: 'blob' }),
-};
-
-// 13. Lead Upload APIs
-export const uploadApi = {
-  uploadLeads: (file, onProgress) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return api.post('/uploads/leads', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: onProgress,
-    });
-  },
-  getUploadProgress: (uploadId) => api.get(`/uploads/${uploadId}/progress`),
-  getUploadStatus: (uploadId) => api.get(`/uploads/${uploadId}/status`),
-  getUploadResult: (uploadId) => api.get(`/uploads/${uploadId}/result`),
-  getUploadErrors: (uploadId) => api.get(`/uploads/${uploadId}/errors`),
-  cancelUpload: (uploadId) => api.post(`/uploads/${uploadId}/cancel`),
-  getUploadHistory: () => api.get('/uploads/history'),
-};
-
-// 14. Bulk Operation APIs
-export const bulkApi = {
-  assignLeads: (data) => api.post('/bulk/leads/assign', data),
-  reassignLeads: (data) => api.post('/bulk/leads/reassign', data),
-  deleteLeads: (data) => api.delete('/bulk/leads/delete', { data }),
-  updateLeads: (data) => api.post('/bulk/leads/update', data),
-  activateUsers: (data) => api.post('/bulk/users/activate', data),
-  deactivateUsers: (data) => api.post('/bulk/users/deactivate', data),
-  assignTeamToUsers: (data) => api.post('/bulk/users/assign-team', data),
-  assignAdminToUsers: (data) => api.post('/bulk/users/assign-admin', data),
-};
-
-// 15. User Activity APIs
-export const activityApi = {
-  getMyActivity: () => api.get('/activity/my'),
-  getAgentActivity: (agentId) => api.get(`/activity/agent/${agentId}`),
-  getAdminActivity: (adminId) => api.get(`/activity/admin/${adminId}`),
-  getAllActivity: () => api.get('/activity/all'),
-};
-
-// 16. Notification APIs
-export const notificationApi = {
-  getNotifications: () => api.get('/notifications'),
-  createNotification: (data) => api.post('/notifications', data),
-  markAsRead: (id) => api.put(`/notifications/${id}/read`),
-  markAllAsRead: () => api.put('/notifications/read-all'),
-};
-
-// 17. Super Admin System APIs
-export const systemApi = {
-  getSettings: () => api.get('/system/settings'),
-  updateSettings: (data) => api.put('/system/settings', data),
-  getAuditLogs: () => api.get('/system/audit-logs'),
-  getAllSessions: () => api.get('/system/all-sessions'),
-  forceLogoutUser: (userId) => api.post(`/system/force-logout/${userId}`),
-  getUserActivity: (userId) => api.get(`/system/user-activity?userId=${userId}`),
-  getDatabaseSummary: () => api.get('/system/database-summary'),
-};
-
-// 18. Admin APIs
+// 6. Admin APIs
 export const adminApi = {
-  getStats: () => api.get('/admin/stats'),
-  getRecentActivity: () => api.get('/admin/recent-activity'),
-  getPendingUsers: () => api.get('/admin/pending-users'),
-  approveUser: (username) => api.post(`/admin/approve-user/${username}`, { action: 'approve' }),
-  rejectUser: (username) => api.post(`/admin/approve-user/${username}`, { action: 'reject' }),
-  getAllUsers: () => api.get('/admin/users'),
-  createUser: (data) => api.post('/admin/users', data),
-  updateUserRole: (username, role) => api.put(`/admin/users/${username}/role`, { role }),
-  toggleUser: (username, enabled) => api.put(`/admin/users/${username}/toggle`, { enabled }),
+  getStats: () => api.get(ENDPOINTS.ADMIN.STATS),
+  getRecentActivity: () => api.get(ENDPOINTS.ADMIN.RECENT_ACTIVITY),
+  getPendingUsers: () => api.get(ENDPOINTS.ADMIN.PENDING_USERS),
+  approveUser: (username) => api.post(`${ENDPOINTS.ADMIN.APPROVE_USER}/${username}`, { action: 'approve' }),
+  rejectUser: (username) => api.post(`${ENDPOINTS.ADMIN.REJECT_USER}/${username}`, { action: 'reject' }),
+  getAllUsers: () => api.get(ENDPOINTS.ADMIN.USERS),
+  createUser: (data) => api.post(ENDPOINTS.ADMIN.USERS, data),
+  updateUserRole: (username, role) => api.put(`${ENDPOINTS.ADMIN.USERS}/${username}/role`, { role }),
+  toggleUser: (username, enabled) => api.put(`${ENDPOINTS.ADMIN.TOGGLE_USER}/${username}`, { enabled }),
   deleteUser: (username) => {
     const userData = localStorage.getItem(AUTH.userKey);
     let userRole = 'ROLE_AGENT';
@@ -291,11 +115,82 @@ export const adminApi = {
         userRole = parsed.role || 'ROLE_AGENT';
       } catch (e) {}
     }
-    return api.delete(`/admin/users/${username}`, {
+    return api.delete(`${ENDPOINTS.ADMIN.DELETE_USER}/${username}`, {
       headers: { 'X-User-Role': userRole }
     });
   },
-  changePassword: (username, password) => api.put(`/admin/users/${username}/password`, { password }),
+  changePassword: (username, password) => api.put(`${ENDPOINTS.ADMIN.CHANGE_PASSWORD}/${username}`, { password }),
+};
+
+// 7. Lead APIs
+export const leadApi = {
+  getLeads: () => api.get(ENDPOINTS.LEADS.GET),
+  getLead: (leadId) => api.get(`${ENDPOINTS.LEADS.GET}/${leadId}`),
+  createLead: (data) => api.post(ENDPOINTS.LEADS.CREATE, data),
+  updateLead: (leadId, data) => api.put(`${ENDPOINTS.LEADS.UPDATE}/${leadId}`, data),
+  deleteLead: (leadId) => api.delete(`${ENDPOINTS.LEADS.DELETE}/${leadId}`),
+  searchLeads: (query, type) => api.get(ENDPOINTS.LEADS.SEARCH, { params: { q: query, type } }),
+  uploadLeads: (file, onProgress) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(ENDPOINTS.LEADS.UPLOAD, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: onProgress,
+    });
+  },
+  getUploadProgress: (uploadId) => api.get(`${ENDPOINTS.LEADS.UPLOAD_PROGRESS}/${uploadId}`),
+  getUploadStatus: (uploadId) => api.get(`${ENDPOINTS.LEADS.UPLOAD_STATUS}/${uploadId}`),
+  bulkDeleteLeads: (leadIds) => api.delete(ENDPOINTS.LEADS.BULK_DELETE, { data: { leadIds } }),
+  deleteLeadsByUploadName: (uploadName) => api.delete(`${ENDPOINTS.LEADS.DELETE_BY_UPLOAD}/${uploadName}`),
+};
+
+// 8. Disposition APIs
+export const dispositionApi = {
+  createDisposition: (data) => api.post(ENDPOINTS.DISPOSITIONS.CREATE, data),
+  getAllDispositions: () => api.get(ENDPOINTS.DISPOSITIONS.ALL),
+  downloadDispositions: (startDate, endDate) => 
+    api.get(ENDPOINTS.DISPOSITIONS.DOWNLOAD, {
+      params: { startDate, endDate },
+      responseType: 'blob',
+    }),
+};
+
+// 9. Dashboard APIs
+export const dashboardApi = {
+  getAgentDashboard: () => api.get(ENDPOINTS.DASHBOARD.AGENT),
+  getAdminDashboard: () => api.get(ENDPOINTS.DASHBOARD.ADMIN),
+  getSuperAdminDashboard: () => api.get(ENDPOINTS.DASHBOARD.SUPER_ADMIN),
+};
+
+// 10. Reports APIs
+export const reportsApi = {
+  getAgentPerformance: (params) => api.get(ENDPOINTS.REPORTS.AGENT_PERFORMANCE, { params }),
+  getAdminPerformance: (params) => api.get(ENDPOINTS.REPORTS.ADMIN_PERFORMANCE, { params }),
+  getTeamPerformance: (params) => api.get(ENDPOINTS.REPORTS.TEAM_PERFORMANCE, { params }),
+  getLeadStatus: (params) => api.get(ENDPOINTS.REPORTS.LEAD_STATUS, { params }),
+  getDispositionSummary: (params) => api.get(ENDPOINTS.REPORTS.DISPOSITION_SUMMARY, { params }),
+  getAllocationSummary: (params) => api.get(ENDPOINTS.REPORTS.ALLOCATION_SUMMARY, { params }),
+  getLoginLogout: (params) => api.get(ENDPOINTS.REPORTS.LOGIN_LOGOUT, { params }),
+  getDateWiseReport: (params) => api.get(ENDPOINTS.REPORTS.DATE_WISE, { params }),
+  exportReport: (params) => api.get(ENDPOINTS.REPORTS.EXPORT, { params, responseType: 'blob' }),
+};
+
+// 11. Upload APIs
+export const uploadApi = {
+  uploadLeads: (file, onProgress) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(ENDPOINTS.UPLOAD.LEADS, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: onProgress,
+    });
+  },
+  getUploadProgress: (uploadId) => api.get(`${ENDPOINTS.UPLOAD.PROGRESS}/${uploadId}`),
+  getUploadStatus: (uploadId) => api.get(`${ENDPOINTS.UPLOAD.STATUS}/${uploadId}`),
+  getUploadResult: (uploadId) => api.get(`${ENDPOINTS.UPLOAD.RESULT}/${uploadId}`),
+  getUploadErrors: (uploadId) => api.get(`${ENDPOINTS.UPLOAD.ERRORS}/${uploadId}`),
+  cancelUpload: (uploadId) => api.post(`${ENDPOINTS.UPLOAD.CANCEL}/${uploadId}`),
+  getUploadHistory: () => api.get(ENDPOINTS.UPLOAD.HISTORY),
 };
 
 export default api;

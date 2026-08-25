@@ -4,31 +4,28 @@
 
 // Get the current hostname/IP
 const hostname = window.location.hostname;
+const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
 
-// If accessing from localhost or 127.0.0.1, use localhost
-// Otherwise use the current hostname/IP
-const API_HOST = (hostname === 'localhost' || hostname === '127.0.0.1') 
-    ? 'localhost' 
-    : hostname;
+// API Configuration
+export const API_BASE_URL = isLocal 
+    ? 'http://localhost:8080' 
+    : `http://${hostname}:8080`;
 
-// ---------- API Configuration ----------
-export const API_BASE_URL = `http://${API_HOST}:8080`;
 export const API_URL = `${API_BASE_URL}/api`;
 
-// ---------- Frontend Configuration ----------
+// Frontend Configuration
 export const FRONTEND_URL = window.location.origin;
 export const APP_NAME = 'Master CRM';
 export const APP_VERSION = '2.0.0';
-export const CUSTOM_IP = API_HOST;
 
-// ---------- Authentication ----------
+// Authentication
 export const AUTH = {
   tokenKey: 'token',
   userKey: 'user',
   refreshTokenKey: 'refreshToken',
 };
 
-// ---------- API Endpoints (All endpoints in one place) ----------
+// API Endpoints - EXPORT THIS
 export const ENDPOINTS = {
   // Auth
   AUTH: {
@@ -119,7 +116,7 @@ export const ENDPOINTS = {
   },
 };
 
-// ---------- Default Values ----------
+// Default Values
 export const DEFAULTS = {
   pageSize: 10,
   maxFileSize: 50 * 1024 * 1024, // 50MB
@@ -127,7 +124,7 @@ export const DEFAULTS = {
   apiTimeout: 30000, // 30 seconds
 };
 
-// ---------- Feature Flags ----------
+// Feature Flags
 export const FEATURES = {
   enableFileUpload: true,
   enableBulkDelete: true,
@@ -136,14 +133,12 @@ export const FEATURES = {
   enableTeamManagement: true,
 };
 
-// ---------- Export all as default ----------
 export default {
   API_BASE_URL,
   API_URL,
   FRONTEND_URL,
   APP_NAME,
   APP_VERSION,
-  CUSTOM_IP,
   AUTH,
   ENDPOINTS,
   DEFAULTS,
