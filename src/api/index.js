@@ -73,6 +73,8 @@ export const userApi = {
   updateUserRole: (userId, role) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}/role`, { role }),
   assignAdmin: (userId, adminId) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}/admin`, { adminId }),
   assignTeam: (userId, teamId) => api.put(`${ENDPOINTS.USERS.UPDATE}/${userId}/team`, { teamId }),
+  getAgents: () => api.get('/users/agents'),
+  getAgentDetails: (agentId) => api.get(`/users/agents/${agentId}`),
 };
 
 // 4. Role Management APIs
@@ -142,6 +144,8 @@ export const leadApi = {
   getUploadStatus: (uploadId) => api.get(`${ENDPOINTS.LEADS.UPLOAD_STATUS}/${uploadId}`),
   bulkDeleteLeads: (leadIds) => api.delete(ENDPOINTS.LEADS.BULK_DELETE, { data: { leadIds } }),
   deleteLeadsByUploadName: (uploadName) => api.delete(`${ENDPOINTS.LEADS.DELETE_BY_UPLOAD}/${uploadName}`),
+  getMyAllocation: () => api.get('/leads/my-allocation'),
+  getAgentLeads: (agentId) => api.get(`/leads/agent/${agentId}`),
 };
 
 // 8. Disposition APIs
@@ -153,13 +157,23 @@ export const dispositionApi = {
       params: { startDate, endDate },
       responseType: 'blob',
     }),
+  getDispositions: () => api.get('/dispositions'),
+  getDispositionById: (id) => api.get(`/dispositions/${id}`),
+  updateDisposition: (id, data) => api.put(`/dispositions/${id}`, data),
+  getDispositionsByAgent: (agentId) => api.get(`/dispositions/agent/${agentId}`),
+  getDispositionsByLead: (leadId) => api.get(`/dispositions/lead/${leadId}`),
 };
 
 // 9. Dashboard APIs
 export const dashboardApi = {
-  getAgentDashboard: () => api.get(ENDPOINTS.DASHBOARD.AGENT),
-  getAdminDashboard: () => api.get(ENDPOINTS.DASHBOARD.ADMIN),
-  getSuperAdminDashboard: () => api.get(ENDPOINTS.DASHBOARD.SUPER_ADMIN),
+  getAgentDashboard: (agentId) => {
+    const params = agentId ? { agentId } : {};
+    return api.get('/dashboard/agent', { params });
+  },
+  getAdminDashboard: () => api.get('/dashboard/admin'),
+  getSuperAdminDashboard: () => api.get('/dashboard/super-admin'),
+  getStats: () => api.get('/dashboard/stats'),
+  getRecentActivity: () => api.get('/dashboard/recent-activity'),
 };
 
 // 10. Reports APIs
