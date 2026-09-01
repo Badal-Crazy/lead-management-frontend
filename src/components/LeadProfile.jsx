@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from './Layout/Layout';
 
-const API_URL = 'http://192.168.1.3:8080/api';
+const API_URL = 'http://192.168.1.4:8080/api';
 
 const LeadProfile = () => {
   const { id } = useParams();

@@ -1,3 +1,4 @@
+// src/api/index.js
 import axios from 'axios';
 import { API_URL, AUTH, ENDPOINTS, DEFAULTS } from '../config';
 
@@ -146,6 +147,16 @@ export const leadApi = {
   deleteLeadsByUploadName: (uploadName) => api.delete(`${ENDPOINTS.LEADS.DELETE_BY_UPLOAD}/${uploadName}`),
   getMyAllocation: () => api.get('/leads/my-allocation'),
   getAgentLeads: (agentId) => api.get(`/leads/agent/${agentId}`),
+  getLeadsByAgent: () => api.get('/leads/agent'),
+  getAgentDashboard: (month) => api.get(`/leads/agent/dashboard?month=${month}`),
+  updateLeadStatus: (leadId, status) => api.put(`/leads/${leadId}/status`, { status }),
+  updatePTPStatus: (leadId, ptpStatus) => api.put(`/leads/${leadId}/ptp`, { ptpStatus }),
+  addFollowUp: (leadId, data) => api.post(`/leads/${leadId}/followup`, data),
+  getDashboardStats: () => api.get('/leads/agent/stats'),
+  getTodayTasks: () => api.get('/leads/agent/tasks/today'),
+  getUpcomingPTPs: () => api.get('/leads/agent/ptp/upcoming'),
+  getBPTP: () => api.get('/leads/agent/ptp/broken'),
+  getRecentActivities: () => api.get('/leads/agent/activities/recent'),
 };
 
 // 8. Disposition APIs
@@ -162,6 +173,7 @@ export const dispositionApi = {
   updateDisposition: (id, data) => api.put(`/dispositions/${id}`, data),
   getDispositionsByAgent: (agentId) => api.get(`/dispositions/agent/${agentId}`),
   getDispositionsByLead: (leadId) => api.get(`/dispositions/lead/${leadId}`),
+  getDispositionsByAgreement: (agreementNumber) => api.get(`/dispositions/agreement/${agreementNumber}`),
 };
 
 // 9. Dashboard APIs
